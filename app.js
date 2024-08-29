@@ -25,6 +25,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// set static assets folder
+app.use(express.static(__dirname + "/public"));
+
 /**
  * -------------- SESSION SETUP ----------------
  */
@@ -112,7 +115,9 @@ app.set("view engine", "ejs");
  * -------------- ROUTES ----------------
  */
 const indexRouter = require("./routes/indexRouter");
+const registerRouter = require("./routes/registerRouter");
 app.use("/", indexRouter);
+app.use("/register", registerRouter);
 
 /**
  * -------------- SERVER ----------------

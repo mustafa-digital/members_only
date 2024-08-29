@@ -1,0 +1,17 @@
+/* style.css */
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  max-width: 250px;
+}
+
+button {
+  max-width: 100px;
+  margin-top: 10px;
+  position: relative;
+  left: 160px;
+}
