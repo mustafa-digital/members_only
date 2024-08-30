@@ -107,7 +107,7 @@ app.use(passport.session());
 
 app.use((req, res, next) => {
   // console.log(req.session);
-  // console.log(req.user);
+  console.log(req.user);
   next();
 });
 
@@ -145,10 +145,12 @@ const indexRouter = require("./routes/indexRouter");
 const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
 const logoutRouter = require("./routes/logoutRouter");
+const createNewMessageRouter = require("./routes/createNewMessageRouter");
 app.use("/", indexRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);
+app.use("/create-new-message", createNewMessageRouter);
 
 /**
  * -------------- SERVER ----------------
