@@ -126,11 +126,12 @@ app.use(async (req, res, next) => {
   if (isAuth) {
     try {
       const result = await Pool.query(
-        "SELECT first_name, last_name FROM Profile WHERE Profile.account_id = $1",
+        "SELECT first_name, last_name, member FROM Profile WHERE Profile.account_id = $1",
         [req.user.id],
       );
       req.user.firstName = result.rows[0].first_name;
       req.user.lastName = result.rows[0].last_name;
+      req.user.isMember = result.rows[0].member;
     } catch (err) {
       throw new Error(err);
     }
@@ -146,11 +147,13 @@ const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
 const logoutRouter = require("./routes/logoutRouter");
 const createNewMessageRouter = require("./routes/createNewMessageRouter");
+const viewMessagesRouter = require("./routes/viewMessagesRouter");
 app.use("/", indexRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);
 app.use("/create-new-message", createNewMessageRouter);
+app.use("/view-messages", viewMessagesRouter);
 
 /**
  * -------------- SERVER ----------------

@@ -1,0 +1,26 @@
+<!-- viewMessages.ejs -->
+
+<%- include("partials/head") %>
+
+<body>
+  <%- include("partials/header") %>
+  <h1>Viewing Messages</h1>
+  <!-- check if user is a member -->
+   <% if(!isMember) { %>
+      <h5>You are not currently a member. <br> Become a member to see users.</h5>
+    <% } else { %>
+      <h5>Welcome back, member!</h5>
+      <% } %>
+  <% messages.forEach(msg => { %>
+    <div style="border: 2px solid black; width: 300px; padding: 5px; margin: 10px">
+      <h5><%= isMember ? msg.email : "Anonymous" %></h5>
+      <h3><%= msg.title %></h3>
+      <h4><%= msg.message %></h4>
+      <h5><%= msg.posted_at %></h5>
+    </div>  
+  <% }); %>
+  <% if (!isMember) { %>
+    <h6 class="secret-membership-link">psssst....Wanna become a member? Click <a href="/membership-hint">Here</a> to see how</h6>  
+  <% } %>
+</body>
+<%- include("partials/footer") %>
