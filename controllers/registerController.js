@@ -37,6 +37,17 @@ const accountValidation = [
     .trim()
     .isLength({ min: MIN_PASSWORD_LENGTH })
     .withMessage(lengthErrPassword),
+  body("password-confirm")
+    .trim()
+    .custom((value, { req }) => {
+      // check if the confirm password field is the same as the first password field, return true if so
+      if (value === req.body.password) {
+        return true;
+      }
+      // the password fields do not match, so return false
+      return false;
+    })
+    .withMessage("Password fields must match."),
 ];
 
 const registerController = {

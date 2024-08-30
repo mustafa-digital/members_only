@@ -10,7 +10,7 @@ const loginController = {
     });
   },
   post: [
-    passport.authenticate("local"),
+    passport.authenticate("local", { failureRedirect: "/login" }),
     async (req, res, next) => {
       res.redirect("/");
     },

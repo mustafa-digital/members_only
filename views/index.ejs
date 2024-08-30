@@ -3,7 +3,18 @@
 
 <%- include("partials/head") %>
 <body>
+  <%- include("partials/header") %>
+  
   <h1>Message Board</h1>
+
+  <% if (isAuth) { %>
+    <h3>Welcome back, <%= firstName %></h3>
+    <h3>View Messages</h3>
+    <a href="create-new-message">Create new message</a>
+  <% } else { %>
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
+  <% } %>
 
 </body>
 <%- include("partials/footer") %>

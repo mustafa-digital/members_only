@@ -56,13 +56,14 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     function (email, password, done) {
       Pool.query(`SELECT * FROM Account WHERE email = ($1)`, [email])
-        .then((res) => {
+        .then(async (res) => {
           const account = res.rows[0];
+          console.log({ account });
           if (!account) {
             return done(null, false);
           }
 
-          const isValid = validatePassword(password, account.hash);
+          const isValid = await validatePassword(password, account.hash);
 
           if (isValid) {
             return done(null, account);
@@ -105,8 +106,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
-  console.log(req.session);
-  console.log(req.user);
+  // console.log(req.session);
+  // console.log(req.user);
   next();
 });
 
@@ -116,14 +117,38 @@ app.use((req, res, next) => {
 app.set("view engine", "ejs");
 
 /**
+ * -------------- CUSTOM MIDDLEWARE ----------------
+ */
+
+// this middleware adds the firstname and lastname properties to req.user when logged in
+app.use(async (req, res, next) => {
+  const isAuth = req.isAuthenticated();
+  if (isAuth) {
+    try {
+      const result = await Pool.query(
+        "SELECT first_name, last_name FROM Profile WHERE Profile.account_id = $1",
+        [req.user.id],
+      );
+      req.user.firstName = result.rows[0].first_name;
+      req.user.lastName = result.rows[0].last_name;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+  next();
+});
+
+/**
  * -------------- ROUTES ----------------
  */
 const indexRouter = require("./routes/indexRouter");
 const registerRouter = require("./routes/registerRouter");
 const loginRouter = require("./routes/loginRouter");
+const logoutRouter = require("./routes/logoutRouter");
 app.use("/", indexRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
+app.use("/logout", logoutRouter);
 
 /**
  * -------------- SERVER ----------------
