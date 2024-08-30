@@ -2,6 +2,8 @@
  * -------------- registerController ----------------
  */
 const { body, validationResult } = require("express-validator");
+const { genPasswordHash } = require("../lib/passwordUtils");
+const { createAccount } = require("../lib/queries");
 
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 20;
@@ -59,6 +61,17 @@ const registerController = {
       }
 
       // if no errors, save the account details in the database, then redirect user to homepage
+      const hash = await genPasswordHash(req.body.password);
+      try {
+        createAccount(
+          req.body.email,
+          hash,
+          req.body.firstName,
+          req.body.lastName,
+        );
+      } catch (err) {
+        res.status(500);
+      }
 
       res.redirect("/");
     },

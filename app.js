@@ -13,6 +13,9 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const Pool = require("./config/pool");
 
+// need this function to validate password in passport middleware function
+const { validatePassword } = require("./lib/passwordUtils");
+
 /**
  * -------------- GENERAL SETUP ----------------
  */
@@ -49,28 +52,29 @@ app.use(
 // START PASSPORT
 
 passport.use(
-  new LocalStrategy(function (username, password, done) {
-    console.log({ username });
-    Pool.query(`SELECT * FROM users WHERE users.username = ($1)`, [username])
-      .then((res) => {
-        const user = res.rows[0];
-        if (!user) {
-          return done(null, false);
-        }
+  new LocalStrategy(
+    { usernameField: "email", passwordField: "password" },
+    function (email, password, done) {
+      Pool.query(`SELECT * FROM Account WHERE email = ($1)`, [email])
+        .then((res) => {
+          const account = res.rows[0];
+          if (!account) {
+            return done(null, false);
+          }
 
-        // Function defined at bottom of app.js
-        const isValid = validPassword(password, user.hash, user.salt);
+          const isValid = validatePassword(password, account.hash);
 
-        if (isValid) {
-          return done(null, user);
-        } else {
-          return done(null, false);
-        }
-      })
-      .catch((err) => {
-        done(err);
-      });
-  }),
+          if (isValid) {
+            return done(null, account);
+          } else {
+            return done(null, false);
+          }
+        })
+        .catch((err) => {
+          done(err);
+        });
+    },
+  ),
 );
 
 passport.serializeUser((user, done) => {
@@ -79,7 +83,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const { rows } = await Pool.query("SELECT * FROM users WHERE id = $1", [
+    const { rows } = await Pool.query("SELECT * FROM Account WHERE id = $1", [
       id,
     ]);
     const user = rows[0];
@@ -116,8 +120,10 @@ app.set("view engine", "ejs");
  */
 const indexRouter = require("./routes/indexRouter");
 const registerRouter = require("./routes/registerRouter");
+const loginRouter = require("./routes/loginRouter");
 app.use("/", indexRouter);
 app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 
 /**
  * -------------- SERVER ----------------
