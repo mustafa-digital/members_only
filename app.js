@@ -105,12 +105,6 @@ passport.deserializeUser(async (id, done) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  // console.log(req.session);
-  console.log(req.user);
-  next();
-});
-
 /**
  * -------------- VIEWS SETUP ----------------
  */
@@ -123,6 +117,7 @@ app.set("view engine", "ejs");
 // this middleware adds the firstname and lastname properties to req.user when logged in
 app.use(async (req, res, next) => {
   const isAuth = req.isAuthenticated();
+  res.locals.isAuth = isAuth;
   if (isAuth) {
     try {
       const result = await Pool.query(
@@ -139,6 +134,13 @@ app.use(async (req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  // console.log(req.session);
+  // console.log(req.user);
+  // console.log(res.locals.isAuth);
+  next();
+});
+
 /**
  * -------------- ROUTES ----------------
  */
@@ -148,12 +150,20 @@ const loginRouter = require("./routes/loginRouter");
 const logoutRouter = require("./routes/logoutRouter");
 const createNewMessageRouter = require("./routes/createNewMessageRouter");
 const viewMessagesRouter = require("./routes/viewMessagesRouter");
+const membershipHintRouter = require("./routes/membershipHintRouter");
+const secretMembersPasswordRouter = require("./routes/secretMembersPasswordRouter");
+const becomeMemberRouter = require("./routes/becomeMemberRouter");
+const deleteMessageRouter = require("./routes/deleteMessageRouter");
 app.use("/", indexRouter);
 app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/logout", logoutRouter);
 app.use("/create-new-message", createNewMessageRouter);
 app.use("/view-messages", viewMessagesRouter);
+app.use("/membership-hint", membershipHintRouter);
+app.use("/secret-members-password", secretMembersPasswordRouter);
+app.use("/become-a-member", becomeMemberRouter);
+app.use("/delete-message", deleteMessageRouter);
 
 /**
  * -------------- SERVER ----------------

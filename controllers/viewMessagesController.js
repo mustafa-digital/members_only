@@ -8,12 +8,11 @@ const viewMessagesController = {
     // get all messages from db
     try {
       const messages = await getAllMessages();
-      console.log(messages);
       res.render("viewMessages", {
         title: "View Messages",
         messages: messages,
-        isAuth: req.isAuthenticated(),
-        isMember: req.user.isMember,
+        isMember: req.user ? req.user.isMember : false,
+        isAdmin: req.user ? req.user.admin : false,
       });
     } catch (err) {
       res.status(500);

@@ -13,7 +13,7 @@ button {
   max-width: 100px;
   margin-top: 10px;
   position: relative;
-  left: 160px;
+  /* left: 160px; */
 }
 
 textarea {
@@ -22,7 +22,7 @@ textarea {
 }
 
 a {
-  color: inherit;
+  /* color: inherit; */
 }
 
 .secret-membership-link {

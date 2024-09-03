@@ -1,0 +1,17 @@
+<!-- becomeMember.ejs -->
+
+<%- include("partials/head") %>
+
+<body>
+  <%- include("partials/header") %>
+  <%- include("partials/errors") %>
+  <h3>Become a Member</h3>
+  <form action="/become-a-member" method="post">
+    <label for="member_password">Enter Members Password</label>
+    <input type="password" name="member_password" required>
+    <button type="submit">Submit</button>
+  </form>
+
+</body>
+
+<%- include("partials/footer") %>
